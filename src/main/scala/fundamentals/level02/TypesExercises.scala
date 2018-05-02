@@ -150,7 +150,7 @@ object TypesExercises {
     * Hint: Use pattern matching
     **/
   import TrafficLight._
-  
+
   def showTrafficLight(trafficLight: TrafficLight): String = trafficLight match {
     case Red => "The traffic light is red"
     case Yellow => "The traffic light is yellow"
@@ -175,5 +175,22 @@ object TypesExercises {
     * RIGHT
     * REPORT
     */
+  sealed trait Direction
+  object Direction {
+    case object North extends Direction
+    case object East extends Direction
+    case object South extends Direction
+    case object West extends Direction
+  }
 
+
+  sealed trait RobotCommand
+
+  object RobotCommand {
+    case class Place(x: Int, y: Int, direction: Direction) extends RobotCommand
+    case object Move extends RobotCommand
+    case object Left extends RobotCommand
+    case object Right extends RobotCommand
+    case object Report extends RobotCommand
+  }
 }
