@@ -26,7 +26,12 @@ object NullExercises {
     * scala> mkTrafficLightOrNull("bob")
     * = null
     **/
-  def mkTrafficLightOrNull(str: String): TrafficLight = ???
+  def mkTrafficLightOrNull(str: String): TrafficLight = str.toLowerCase match {
+    case "red" => Red
+    case "yellow" => Yellow
+    case "green" => Green
+    case _     => null
+  }
 
   /**
     * scala> mkTrafficLightOrNullThenShow("red")
@@ -43,7 +48,19 @@ object NullExercises {
     *
     * Hint: Use `mkTrafficLightOrNull` and pattern matching
     */
-  def mkTrafficLightOrNullThenShow(str: String): String = ???
+  def mkTrafficLightOrNullThenShow(str: String): String = {
+    val light = mkTrafficLightOrNull(str)
+    if (light != null) {
+      light match {
+        case Red => "Traffic light is red"
+        case Yellow => "Traffic light is yellow"
+        case Green => "Traffic light is green"
+      }
+    } else {
+      "Traffic light is invalid"
+    }
+  }
+
 
   /**
     * scala> mkPersonOrNull("Bob", 20)
@@ -59,7 +76,13 @@ object NullExercises {
     * scala> mkPersonOrNull("Bob", -1)
     * = null
     **/
-  def mkPersonOrNull(name: String, age: Int): Person = ???
+  def mkPersonOrNull(name: String, age: Int): Person = {
+    if ((name == null || name.trim.length == 0) || age < 0){
+      null
+    } else {
+      Person(name, age)
+    }
+  }
 
   /**
     * scala> mkPersonOrNullThenChangeName("Bob", 20, "John")
@@ -73,13 +96,24 @@ object NullExercises {
     *
     * Hint: Use `mkPersonOrNull` and `changeName` (already implemented below)
     **/
-  def mkPersonOrNullThenChangeName(oldName: String, age: Int, newName: String): Person = ???
+  def mkPersonOrNullThenChangeName(oldName: String, age: Int, newName: String): Person = {
+    val person = mkPersonOrNull(oldName, age)
+    if (person != null) {
+      if (newName != null && newName.trim.length > 0) {
+        changeName(newName, person)
+      } else {
+        null
+      }
+    } else {
+      null
+    }
+  }
 
   def changeName(newName: String, person: Person): Person = person.copy(name = newName)
 
   /**
     * Does the following function return a `null`?
     */
-  def mean(nums: List[Int]): Double = ???
+  def mean(nums: List[Int]): Double = nums.sum / nums.size
 
 }
