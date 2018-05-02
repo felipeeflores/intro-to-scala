@@ -112,7 +112,7 @@ class ExceptionExercisesTest extends FunSpec with TypeCheckedTripleEquals {
     )
 
     it("should return all errors") {
-      collectErrors.size === 6
+      collectErrors.size === expectedErrors.size
     }
 
     it("should return a List Exceptions thrown while processing inputs") {

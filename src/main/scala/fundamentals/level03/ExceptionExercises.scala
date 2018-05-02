@@ -1,5 +1,7 @@
 package fundamentals.level03
 
+import fundamentals.level03.ExceptionExercises.InvalidAgeRangeException
+
 /**
   * These exercises are intended to show the difficulty of working with Exceptions.
   *
@@ -46,7 +48,13 @@ object ExceptionExercises {
     *
     * Hint: use the trim and isEmpty methods on String
     */
-  def getName(providedName: String) : String = ???
+  def getName(providedName: String): String = {
+    if (providedName.trim.length > 0) {
+      providedName
+    } else {
+      throw new EmptyNameException("provided name is empty")
+    }
+  }
 
   /**
     * Implement the function getAge, so that it either accepts the supplied age
@@ -67,9 +75,10 @@ object ExceptionExercises {
     */
   def getAge(providedAge: String) : Int =
       try {
-        ???
+        val intAge = providedAge.toInt
+        if (intAge > 0 && intAge <= 120) intAge else throw new InvalidAgeRangeException(s"provided age should be between 1-120: $providedAge")
       } catch {
-        case _: NumberFormatException => ???
+        case _: NumberFormatException => throw new InvalidAgeValueException(s"provided age is invalid: $providedAge")
       }
 
 
@@ -95,7 +104,7 @@ object ExceptionExercises {
     *
     * Hint: Use `getName` and `getAge` from above.
     */
-  def createPerson(name: String, age: String): Person = ???
+  def createPerson(name: String, age: String): Person = Person(getName(name), getAge(age))
 
   /**
     * Implement the function validPairs, that uses the personStringPairs List
@@ -107,7 +116,22 @@ object ExceptionExercises {
     * Hint: use filter on List using the getName and getAge functions
     *
     */
-  def validPairs: List[(String, String)] = ???
+  def validPairs: List[(String, String)] = personStringPairs.filter {
+    case (name, age) => isValidName(name) && isValidAge(age)
+  }
+
+  def isValidName(name: String): Boolean = try {
+    getName(name) == name
+  } catch {
+    case _: Throwable => false
+  }
+
+  def isValidAge(age: String): Boolean = try {
+    getAge(age)
+    true
+  } catch {
+    case _: Throwable => false
+  }
 
   /**
     * Implement the function createValidPeople that only uses the collect function on List
@@ -118,10 +142,8 @@ object ExceptionExercises {
     *
     * What issues do you run into (if any)?
     */
-  def createValidPeople: List[Person] = {
-    personStringPairs.collect {
-      case (name, age) => ???
-    }
+  def createValidPeople: List[Person] = personStringPairs.collect {
+    case (name, age) if isValidName(name) && isValidAge(age) => Person(name, getAge(age))
   }
 
   /**
@@ -137,9 +159,21 @@ object ExceptionExercises {
     * What issues do you run into (if any)?
     *
     */
-  def collectErrors: List[Exception] = {
-    personStringPairs.collect {
-      case (name, age) => ???
-    }
+  def collectErrors: List[Exception] = personStringPairs.flatMap {
+    case (name, age) =>
+      val getNameErrors = try {
+        getName(name)
+        List.empty[Exception]
+      } catch {
+        case e: Exception => List(e)
+      }
+
+      val getAgeErrors = try {
+        getAge(age)
+        List.empty[Exception]
+      } catch {
+        case e: Exception => List(e)
+      }
+      getNameErrors ++ getAgeErrors
   }
 }
