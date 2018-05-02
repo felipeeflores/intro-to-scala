@@ -89,9 +89,8 @@ object TypesExercises {
     case color@"yellow" => s"The traffic light is $color"
     case color@"green" => s"The traffic light is $color"
     case color =>
-      val nasty = """frequency\s(\d*)""".r
       color match {
-        case nasty(digits) => s"The traffic light is flashing with a frequency of $digits"
+        case flashing(digits) => s"The traffic light is flashing with a frequency of $digits"
         case _ => "The traffic light is unknown"
       }
   }

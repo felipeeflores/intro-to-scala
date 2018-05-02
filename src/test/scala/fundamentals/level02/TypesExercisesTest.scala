@@ -96,13 +96,13 @@ class TypesExercisesTest extends FunSpec with TypeCheckedTripleEquals {
     }
 
     it("should show flashing with frequency") {
-      val str = showTrafficLightStr("frequency 20")
+      val str = showTrafficLightStr("flashing 20")
 
       assert(str === "The traffic light is flashing with a frequency of 20")
     }
 
     it("should return a default for flashing with no frequency") {
-      val str = showTrafficLightStr("frequency ten")
+      val str = showTrafficLightStr("flashing ten")
 
       assert(str === "The traffic light is unknown")
     }
