@@ -1,5 +1,7 @@
 package fundamentals.level01
 
+import scala.util.Random
+
 
 /**
   * Level 1 focuses on basic Scala, including syntax and especially programming with functions.
@@ -31,8 +33,10 @@ object IntroExercises {
 
   /**
     * How about this one?
+    *
+    * The output for this function is the entire family of Int values (-2^31, 2^31 - 1)!
     */
-  def bar(a: Int): Int = ???
+  def bar(a: Int): Int = Random.nextInt
 
   /**
     * scala> timesTwoIfEven(4)
@@ -42,7 +46,7 @@ object IntroExercises {
     *
     * Important: Every `if` must have an `else`! Otherwise your function is not total.
     */
-  def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) 2 * x else x
+  def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) x * 2 else x
 
   /**
     * scala> showNumber(100)
