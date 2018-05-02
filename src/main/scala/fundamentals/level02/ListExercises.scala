@@ -41,7 +41,7 @@ object ListExercises {
     *
     * Hint: Refer the construction of list
     */
-  def prependToList[A](x: A, xs: List[A]): List[A] = ???
+  def prependToList[A](x: A, xs: List[A]): List[A] = x :: xs
 
   /**
     * scala> appendToList(1, List(2, 3, 4))
@@ -49,7 +49,7 @@ object ListExercises {
     *
     * Hint: Use the :+ operator
     */
-  def appendToList[A](x: A, xs: List[A]): List[A] = ???
+  def appendToList[A](x: A, xs: List[A]): List[A] = xs :+ x
 
   /**
     * `List` has an `.isEmpty` method that you can call to know whether an instance is empty or not.
@@ -71,7 +71,10 @@ object ListExercises {
     * }
     * ```
     */
-  def isEmptyList[A](xs: List[A]): Boolean = ???
+  def isEmptyList[A](xs: List[A]): Boolean = xs match {
+    case Nil => true
+    case _ => false
+  }
 
   /**
     * scala> showListSize(List(1, 2, 3))
@@ -85,7 +88,10 @@ object ListExercises {
     *
     * Hint: Use pattern matching, string interpolation and length
     */
-  def showListSize[A](xs: List[A]): String = ???
+  def showListSize[A](xs: List[A]): String = xs match {
+    case Nil => "This is an empty list"
+    case nonEmpty => s"This is a list of size ${nonEmpty.size}"
+  }
 
   /**
     * Mapping a function over a List
@@ -98,7 +104,7 @@ object ListExercises {
     *
     * Hint: Use .map
     **/
-  def addNumToEach(num: Int, nums: List[Int]): List[Int] = ???
+  def addNumToEach(num: Int, nums: List[Int]): List[Int] = nums.map(num + _)
 
   /**
     * Filter a List
@@ -110,7 +116,7 @@ object ListExercises {
     *
     * Hint: Use .filter and '%' for mod operator
     */
-  def filterEven(nums: List[Int]): List[Int] = ???
+  def filterEven(nums: List[Int]): List[Int] = nums.filter(_ % 2 == 0)
 
   /**
     * Folds
@@ -134,7 +140,11 @@ object ListExercises {
     *
     * Hint: Use pattern matching and .foldLeft
     */
-  def product(nums: List[Int]): Int = ???
+  def product(nums: List[Int]): Int = nums.foldLeft(1)((acc, x) => acc * x)
+
+
+  // TODO: Add product2, suggest to use combinators in the List type
+
 
   /**
     * scala> min(List(4, 6, 1))
@@ -145,7 +155,12 @@ object ListExercises {
     *
     * Hint: Use pattern matching and .foldLeft
     **/
-  def min(nums: List[Int]): Int = ???
+  def min(nums: List[Int]): Int = nums.foldLeft[Option[Int]](None)((maybeMin, x) => {
+    maybeMin match {
+      case Some(currentMin) => if (x < currentMin) Some(x) else Some(currentMin)
+      case None => Some(x)
+    }
+  }).fold(Int.MinValue)(identity)
 
   /**
     * Return the person in the List that is the youngest. If there are more than one person with the youngest age,
@@ -160,7 +175,8 @@ object ListExercises {
     *
     * Hint: Use pattern matching and .foldLeft
     */
-  def youngestPerson(persons: List[Person]): Person = ???
+  def youngestPerson(persons: List[Person]): Person =
+    persons.sortBy(p => p.age).headOption.getOrElse(Person("Nobody", 0))
 
   /**
     * Typically in a data processing job, you would only want to log every
@@ -172,7 +188,12 @@ object ListExercises {
     *
     * Hint: Use .zipWithIndex, filter and showPerson1
     */
-  def showEveryNthPerson(n: Int, persons: List[Person]): List[String] = ???
+  def showEveryNthPerson(n: Int, persons: List[Person]): List[String] =
+    persons.zipWithIndex filter {
+      case (_, idx) =>  (idx + 1) % n == 0
+    } map {
+      case (person, _) => s"${person.name} is ${person.age} years old"
+    }
 
   /**
     * Given a list of `Person`s ordered by age in ascending order. Return all of those that are under 18.
@@ -182,6 +203,6 @@ object ListExercises {
     *
     * Hint: Use .takeWhile
     */
-  def retrieveMinors(orderedPersons: List[Person]): List[Person] = ???
+  def retrieveMinors(orderedPersons: List[Person]): List[Person] = orderedPersons.takeWhile(_.age < 18)
 
 }
