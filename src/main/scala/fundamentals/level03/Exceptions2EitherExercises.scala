@@ -57,7 +57,13 @@ object Exceptions2EitherExercises {
     * scala> getName("   ")
     * = Left(EmptyName(provided name is empty))
     **/
-  def getName(providedName: String): Either[AppError, String] = ???
+  def getName(providedName: String): Either[AppError, String] = {
+    if (providedName.trim.length > 0) {
+      Right(providedName)
+    } else {
+      Left(EmptyName("provided name is empty"))
+    }
+  }
 
   /**
     * Implement the function getAge that returns a Left with an InvalidAgeValue if the age provided can't
@@ -77,9 +83,13 @@ object Exceptions2EitherExercises {
     */
   def getAge(providedAge: String): Either[AppError, Int] =
     try {
-      ???
+      val intAge = providedAge.toInt
+      if (intAge > 0 && intAge < 121)
+        Right(intAge)
+      else
+        Left(InvalidAgeRange(s"provided age should be between 1-120: $providedAge"))
     } catch {
-      case _: NumberFormatException => ???
+      case _: NumberFormatException => Left(InvalidAgeValue(s"provided age is invalid: $providedAge"))
     }
 
   /**
@@ -100,7 +110,10 @@ object Exceptions2EitherExercises {
     *
     * Hint: Use a for-comprehension to sequence the Eithers from getName and getAge
     */
-  def createPerson(name: String, age: String): Either[AppError, Person] = ???
+  def createPerson(name: String, age: String): Either[AppError, Person] = for {
+    personName <- getName(name)
+    personAge <- getAge(age)
+  } yield Person(personName, personAge)
 
   /**
     * Implement the function createValidPeople that uses the personStringPairs List
@@ -112,7 +125,11 @@ object Exceptions2EitherExercises {
     * Hint: Use `map`, `createPerson` and `collect`
     *
     */
-  def createValidPeople: List[Person] = ???
+  def createValidPeople: List[Person] = personStringPairs.map {
+    case (nameStr, ageStr) => createPerson(nameStr, ageStr)
+  }.collect {
+    case Right(person) => person
+  }
 
   /**
     * Implement the function collectErrors that collects all the errors
@@ -126,5 +143,9 @@ object Exceptions2EitherExercises {
     *
     * Hint: Use `map`, `createPerson` and `collect`
     */
-  def collectErrors: List[AppError] = ???
+  def collectErrors: List[AppError] = personStringPairs.map {
+    case (nameStr, ageStr) => createPerson(nameStr, ageStr)
+  }.collect {
+    case Left(error) => error
+  }
 }

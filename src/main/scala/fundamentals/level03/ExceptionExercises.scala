@@ -1,7 +1,5 @@
 package fundamentals.level03
 
-import fundamentals.level03.ExceptionExercises.InvalidAgeRangeException
-
 /**
   * These exercises are intended to show the difficulty of working with Exceptions.
   *
@@ -21,7 +19,6 @@ object ExceptionExercises {
          ("The Professor", "200"),
          ("Berlin", "43"),
          ("Arturo Roman", "0"),
-         ("", "1000"), // <- Two errors should be dealt with
          ("", "30"))
 
 /**
@@ -161,19 +158,11 @@ object ExceptionExercises {
     */
   def collectErrors: List[Exception] = personStringPairs.flatMap {
     case (name, age) =>
-      val getNameErrors = try {
-        getName(name)
-        List.empty[Exception]
+      try {
+        createPerson(name, age)
+        List.empty
       } catch {
         case e: Exception => List(e)
       }
-
-      val getAgeErrors = try {
-        getAge(age)
-        List.empty[Exception]
-      } catch {
-        case e: Exception => List(e)
-      }
-      getNameErrors ++ getAgeErrors
   }
 }
