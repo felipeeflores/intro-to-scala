@@ -41,7 +41,7 @@
   /**
   def add(x: Int, y: Int): Int = x + y
   
-  
+  // [A] -> polymorphic type in Scala, also know as Generics in other languages
   def foo[A](a: A): A = a
   
   def bar(a: Int): Int = Random.nextInt
@@ -53,8 +53,19 @@
   def another[A](items: List[A]): Boolean = ???
   
   
-  def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) curriedAdd(x)(x) else x
+  def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) x * 2 else x
   
+  //Not total?
+  def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) x * 2
+  // Error:(55, 37) type mismatch;
+  // found   : Unit
+  // required: Int
+    
+  // In Scala if statements are expressions
+  scala> val foo = if (5 > 3) "foo" else "bar"
+  foo: String = foo
+  
+    
   def showNumber(x: Int): String = s"The number is $x"
 
 ```
