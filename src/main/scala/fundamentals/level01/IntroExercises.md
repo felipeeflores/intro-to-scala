@@ -41,13 +41,17 @@
   /**
   def add(x: Int, y: Int): Int = x + y
   
-  def curriedAdd(x: Int)(y: Int): Int = x + y
-  
-  def add5(y: Int): Int = curriedAdd(y)(5)
   
   def foo[A](a: A): A = a
   
   def bar(a: Int): Int = Random.nextInt
+  
+  // More parametricity supporting examples
+  
+  def other[A](items: List[A]): Int = ???
+
+  def another[A](items: List[A]): Boolean = ???
+  
   
   def timesTwoIfEven(x: Int): Int = if (x % 2 == 0) curriedAdd(x)(x) else x
   
