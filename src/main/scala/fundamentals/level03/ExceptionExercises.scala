@@ -1,5 +1,7 @@
 package fundamentals.level03
 
+import fundamentals.level03.Exceptions2EitherExercises.InvalidAgeRange
+
 /**
   * These exercises are intended to show the difficulty of working with Exceptions.
   *
@@ -32,7 +34,7 @@ object ExceptionExercises {
 
   /**
     * Implement the function getName, so that it either accepts the supplied name
-    * and returns it unchanged or throws a EmptyNameException if the supplied name
+    * and returns it unchanged or throws an EmptyNameException if the supplied name
     * is empty.
     *
     * scala> getName("Fred")
@@ -43,7 +45,9 @@ object ExceptionExercises {
     *
     * Hint: use the isEmpty method on String
     */
-  def getName(providedName: String) : String = ???
+  def getName(providedName: String) : String = {
+    if (!providedName.isEmpty) providedName else throw new EmptyNameException("provided name is empty")
+  }
 
   /**
     * Implement the function getAge, so that it either accepts the supplied age
@@ -64,9 +68,13 @@ object ExceptionExercises {
     */
   def getAge(providedAge: String) : Int =
       try {
-        ???
+        val age = providedAge.toInt
+        if (age < 1 || age > 120) {
+          throw new InvalidAgeRangeException(s"provided age should be between 1-120: $providedAge")
+        }
+        age
       } catch {
-        case _: NumberFormatException => ???
+        case _: NumberFormatException => throw new InvalidAgeValueException(s"provided age is invalid: $providedAge")
       }
 
 
