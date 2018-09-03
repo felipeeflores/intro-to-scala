@@ -100,7 +100,7 @@ object ExceptionExercises {
     *
     * Hint: Use `getName` and `getAge` from above.
     */
-  def createPerson(name: String, age: String): Person = ???
+  def createPerson(name: String, age: String): Person = Person(getName(name), getAge(age))
 
   /**
     * Implement the function createValidPeople to create a List of Person instances
@@ -115,13 +115,14 @@ object ExceptionExercises {
     * What issues do you run into (if any)?
     */
   def createValidPeople: List[Person] = {
-    personStringPairs.map {
+    personStringPairs.flatMap {
       case (name, age) =>
         try {
-          ???
+          Some(createPerson(name, age))
         } catch {
-          case _: EmptyNameException       => ???
-          //handle in any other exception here
+          case _: EmptyNameException       => None
+          case _: InvalidAgeRangeException => None
+          case _: InvalidAgeValueException => None
         }
     }
   }
@@ -142,8 +143,16 @@ object ExceptionExercises {
     * What issues do you run into (if any)?
     */
   def collectErrors: List[Exception] = {
-    personStringPairs.map {
-      case (name, age) => ???
+    personStringPairs.flatMap {
+      case (name, age) =>
+        try {
+          createPerson(name, age)
+          None
+        } catch {
+          case e: EmptyNameException       => Some(e)
+          case e: InvalidAgeRangeException => Some(e)
+          case e: InvalidAgeValueException => Some(e)
+        }
     }
   }
 }
