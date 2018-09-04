@@ -54,7 +54,9 @@ object Exceptions2EitherExercises {
     * scala> getName("")
     * = Left(EmptyName(provided name is empty))
     **/
-  def getName(providedName: String): Either[AppError, String] = ???
+  def getName(providedName: String): Either[AppError, String] =
+    if (!providedName.isEmpty) Right(providedName) else Left(EmptyName("provided name is empty"))
+
 
   /**
     * Implement the function getAge that returns a Left with an InvalidAgeValue if the age provided can't
@@ -74,9 +76,13 @@ object Exceptions2EitherExercises {
     */
   def getAge(providedAge: String): Either[AppError, Int] =
     try {
-      ???
+      val intAge = providedAge.toInt
+      if (intAge > 0 && intAge <= 120)
+        Right(intAge)
+      else
+        Left(InvalidAgeRange(s"provided age should be between 1-120: $providedAge"))
     } catch {
-      case _: NumberFormatException => ???
+      case _: NumberFormatException => Left(InvalidAgeValue(s"provided age is invalid: $providedAge"))
     }
 
   /**
@@ -97,7 +103,10 @@ object Exceptions2EitherExercises {
     *
     * Hint: Use a for-comprehension to sequence the Eithers from getName and getAge
     */
-  def createPerson(name: String, age: String): Either[AppError, Person] = ???
+  def createPerson(name: String, age: String): Either[AppError, Person] = for {
+    validName <- getName(name)
+    validAge <- getAge(age)
+  } yield Person(validName, validAge)
 
   /**
     * scala> makeNameUpperCase("Fred", "32")
@@ -115,12 +124,17 @@ object Exceptions2EitherExercises {
     * Hint: Use `createPerson` then use `map` and `copy`.
     *
     */
-  def makeNameUpperCase(name: String, age: String): Either[AppError, Person] = ???
+  def makeNameUpperCase(name: String, age: String): Either[AppError, Person] =
+    createPerson(name, age).map(person => person.copy(name = person.name.toUpperCase()))
 
   /**
     * Reimplement createPerson using only `flatMap` and `map`
     */
- def createPerson2(name: String, age: String): Either[AppError, Person] = ???
+ def createPerson2(name: String, age: String): Either[AppError, Person] = {
+   getName(name).flatMap{ validName =>
+     getAge(age).map(Person(validName, _))
+   }
+ }
 
 
   /**
@@ -147,7 +161,17 @@ object Exceptions2EitherExercises {
     * }
     * ```
     */
-  def createPersonAndShow(name: String, age: String): String = ???
+  def createPersonAndShow(name: String, age: String): String = {
+    val errorOrPerson = createPerson(name, age)
+
+    errorOrPerson.fold ({
+      case EmptyName(_) => "Empty name supplied"
+      case InvalidAgeValue(_) => "Invalid age value supplied"
+      case InvalidAgeRange(_) => "Invalid age range supplied"
+    },
+      person => s"${person.name} is ${person.age}"
+    )
+  }
 
   /**
     * Implement the function createValidPeople that uses the personStringPairs List
@@ -159,7 +183,11 @@ object Exceptions2EitherExercises {
     * Hint: Use `map` and `collect`
     *
     */
-  def createValidPeople: List[Person] = ???
+  def createValidPeople: List[Person] = personStringPairs.map {
+    case (name, age) => createPerson(name, age)
+  }.collect {
+    case Right(person) => person
+  }
 
   /**
     * Implement the function collectErrors that collects all the errors
@@ -173,5 +201,9 @@ object Exceptions2EitherExercises {
     *
     * Hint: Use `map` and `collect`
     */
-  def collectErrors: List[AppError] = ???
+  def collectErrors: List[AppError] = personStringPairs.map {
+    case (name, age) => createPerson(name, age)
+  }.collect {
+    case Left(error) => error
+  }
 }
