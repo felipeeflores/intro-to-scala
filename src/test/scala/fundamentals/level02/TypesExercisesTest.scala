@@ -89,11 +89,11 @@ class TypesExercisesTest extends FunSpec with TypeCheckedTripleEquals {
     }
 
     it("should return a default on other inputs") {
-      ???
+      assert(showTrafficLightStr("blah") === "The traffic light is not valid")
     }
 
     it("should show flashing") {
-      ???
+      assert(showTrafficLightStr("flashing") === "The traffic light is flashing")
     }
 
   }
@@ -119,7 +119,7 @@ class TypesExercisesTest extends FunSpec with TypeCheckedTripleEquals {
     }
 
     it("should show Flashing") {
-      ???
+      assert(showTrafficLight(Flashing) === "The traffic light is flashing")
     }
 
   }
