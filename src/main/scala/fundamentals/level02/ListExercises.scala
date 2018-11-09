@@ -2,6 +2,8 @@ package fundamentals.level02
 
 import fundamentals.level02.TypesExercises.{Person, showPerson1}
 
+import scala.annotation.tailrec
+
 /**
   * These exercises will teach you how to work with the `List` data structure in Scala in a declarative manner.
   * At the end of these exercises, you should have a good intuition on when to use `map`, `filter` or `fold`.
@@ -41,7 +43,7 @@ object ListExercises {
     *
     * Hint: Refer the construction of list
     */
-  def prependToList[A](x: A, xs: List[A]): List[A] = ???
+  def prependToList[A](x: A, xs: List[A]): List[A] = x :: xs
 
   /**
     * scala> appendToList(1, List(2, 3, 4))
@@ -49,7 +51,7 @@ object ListExercises {
     *
     * Hint: Use the :+ operator
     */
-  def appendToList[A](x: A, xs: List[A]): List[A] = ???
+  def appendToList[A](x: A, xs: List[A]): List[A] = xs :+ x
 
   /**
     * `List` has an `.isEmpty` method that you can call to know whether an instance is empty or not.
@@ -71,7 +73,10 @@ object ListExercises {
     * }
     * ```
     */
-  def isEmptyList[A](xs: List[A]): Boolean = ???
+  def isEmptyList[A](xs: List[A]): Boolean = xs match {
+    case _ :: _ => false // _ here acts as a wildcard or placeholder that matches the shape of the list (head + tail)
+    case Nil => true
+  }
 
   /**
     * scala> showListSize(List(1, 2, 3))
@@ -85,7 +90,38 @@ object ListExercises {
     *
     * Hint: Use pattern matching, string interpolation and length
     */
-  def showListSize[A](xs: List[A]): String = ???
+  def showListSize[A](xs: List[A]): String = xs match {
+    /*
+    //Solution as requested by the exercise:
+
+    case Nil => "This is an empty list"
+    case notEmptyList => s"This is a list of size ${notEmptyList.length}"
+
+    */
+
+    // More elaborate exercise using recursion
+    case Nil => "This is an empty list"
+    case _ => showListSize2(xs) // here the wildcard is use to mean we don't care about what's there now that we know it is not empty
+
+  }
+
+
+  private def showListSize2[A](xs: List[A]): String = {
+
+    // here we elaborate the solution a bit more to show tail recursion and the optional @tailrec annotation
+    // see https://en.wikipedia.org/wiki/Tail_call
+    @tailrec
+    def countListSize(currentSize: Int, rest: List[A]): Int = {
+      rest match {
+        case Nil => currentSize
+        case _ :: tail => countListSize(1 + currentSize, tail) // this call is in tail position allowing compiler to reuse stack frames
+      }
+    }
+
+    val listSize = countListSize(0, xs)
+
+    s"This is a list of size $listSize"
+  }
 
   /**
     * Mapping a function over a List
@@ -98,7 +134,7 @@ object ListExercises {
     *
     * Hint: Use .map
     **/
-  def addNumToEach(num: Int, nums: List[Int]): List[Int] = ???
+  def addNumToEach(num: Int, nums: List[Int]): List[Int] = nums.map(_ + num)
 
   /**
     * Filter a List
@@ -110,7 +146,7 @@ object ListExercises {
     *
     * Hint: Use .filter and '%' for mod operator
     */
-  def filterEven(nums: List[Int]): List[Int] = ???
+  def filterEven(nums: List[Int]): List[Int] = nums.filter(_ % 2 == 0)
 
   /**
     * Folds
@@ -134,7 +170,7 @@ object ListExercises {
     *
     * Hint: Use .foldLeft
     */
-  def product(nums: List[Int]): Int = ???
+  def product(nums: List[Int]): Int = nums.foldLeft(1)(_ * _)
 
   /**
     * scala> min(List(4, 6, 1))
@@ -147,8 +183,8 @@ object ListExercises {
     **/
   def min(nums: List[Int]): Int =
     nums match {
-      case Nil => ???
-      case head :: tail => ???
+      case Nil => Int.MinValue
+      case head :: tail => tail.foldLeft(head)((b, a) => if (a < b) a else b)
     }
 
   /**
@@ -164,6 +200,9 @@ object ListExercises {
     *
     * Hint: Use pattern matching and .foldLeft
     */
-  def youngestPerson(persons: List[Person]): Person = ???
+  def youngestPerson(persons: List[Person]): Person = persons match {
+    case Nil => Person("Nobody", 0)
+    case firstPerson :: everyoneElse => everyoneElse.foldLeft(firstPerson)((b, a) => if (a.age < b.age) a else b)
+  }
 
 }
