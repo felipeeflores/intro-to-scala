@@ -22,7 +22,7 @@ object Main {
         val fileContent: String = Source.fromFile(filepath).getLines().mkString("\n")
 
         // Implement `printErrorsOverSeverity` and then call it from here
-        ???
+        printErrorsOverSeverity(fileContent, 0)
 
       case _ => println("""sbt "runMain fundamentals.level04.Main src/main/resources/logfile.csv"""")
     }
@@ -38,6 +38,11 @@ object Main {
     *
     * Hint: Use println to write to stdout
     */
-  private def printErrorsOverSeverity(logFile: String, severity: Int): Unit = ???
+  private def printErrorsOverSeverity(logFile: String, severity: Int): Unit = {
+    //println can take any as an argument, and using Any is discouraged, wartremover helps us avoiding that
+    //that's why in this implementation we can't call println directly (we have to give the argument a name to help
+    //Scala compiler to know that the actual type is a String)
+    LogParser.showErrorsOverSeverity(logFile, severity).foreach(message => println(message))
+  }
 
 }
